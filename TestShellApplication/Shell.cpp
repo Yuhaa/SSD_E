@@ -25,19 +25,23 @@ void Shell::handleCommand(string strCommandLine, ostream& output)
     vCommandList.erase(vCommandList.begin());
 
     if (strCommand == "read") {
-        ReadCommand read(vCommandList, m_pSSDDriver, output);
+        ReadCommand read(m_pSSDDriver, output);
+        read.SetCommandList(vCommandList);
         read.Execute();
     }
     else if (strCommand == "fullread") {
-        FullReadCommand cmd(vCommandList, m_pSSDDriver, output);
+        FullReadCommand cmd(m_pSSDDriver, output);
+        cmd.SetCommandList(vCommandList);
         cmd.Execute();
     }
     else if (strCommand == "write") {
-        WriteCommand cmd(vCommandList, m_pSSDDriver, output);
+        WriteCommand cmd(m_pSSDDriver, output);
+        cmd.SetCommandList(vCommandList);
         cmd.Execute();
     }
     else if (strCommand == "fullwrite") {
-        FullWriteCommand cmd(vCommandList, m_pSSDDriver, output);
+        FullWriteCommand cmd(m_pSSDDriver, output);
+        cmd.SetCommandList(vCommandList);
         cmd.Execute();
     }
 }
