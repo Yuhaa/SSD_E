@@ -1,6 +1,7 @@
 #include "Shell.h"
 
 #include "ReadCommand.h"
+#include "WriteCommand.h"
 
 #include <sstream>
 #include <vector>
@@ -37,6 +38,10 @@ void Shell::handleCommand(string lineString, std::ostream& output)
 
     if (command == "read") {
         ReadCommand cmd(commandList, m_pSSDDriver, output);
+        cmd.Execute();
+    }
+    else if (command == "write") {
+        WriteCommand cmd(commandList, m_pSSDDriver);
         cmd.Execute();
     }
 }
