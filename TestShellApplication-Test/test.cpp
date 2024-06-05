@@ -7,6 +7,8 @@
 #include "FullReadCommand.cpp"
 #include "FullWriteCommand.cpp"
 #include "ExitCommand.cpp"
+#include "HelpCommand.cpp"
+#include "InvalidCommand.cpp"
 #include "SSDCommandInvoker.cpp"
 #include "Shell.cpp"
 
@@ -287,4 +289,43 @@ TEST_F(TestShellApplicationTestFixture, ExitIgnoreFollowingCommands) {
 		.Times(0);
 
 	EXPECT_EQ(RunCommand(strCommandLines), strExpectedResult);
+}
+
+// help
+TEST_F(TestShellApplicationTestFixture, HelpWithoutNoError) {
+	std::string strCommandLine = "help";
+
+	EXPECT_CALL(ssdMock, Read)
+		.Times(0);
+
+	EXPECT_CALL(ssdMock, Write)
+		.Times(0);
+
+	EXPECT_NO_THROW(RunCommand(strCommandLine));
+}
+
+TEST_F(TestShellApplicationTestFixture, HelpNoErrorReturn) {
+	std::string strCommandLine = "help";
+	std::string strExpectedResult = "INVALID COMMAND\n";
+
+	EXPECT_CALL(ssdMock, Read)
+		.Times(0);
+
+	EXPECT_CALL(ssdMock, Write)
+		.Times(0);
+
+	EXPECT_NE(RunCommand(strCommandLine), strExpectedResult);
+}
+
+TEST_F(TestShellApplicationTestFixture, InvalidCommand) {
+	std::string strCommandLine = "Read 10";
+	std::string strExpectedResult = "INVALID COMMAND\n";
+
+	EXPECT_CALL(ssdMock, Read)
+		.Times(0);
+
+	EXPECT_CALL(ssdMock, Write)
+		.Times(0);
+
+	EXPECT_EQ(RunCommand(strCommandLine), strExpectedResult);
 }
