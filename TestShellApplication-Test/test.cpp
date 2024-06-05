@@ -54,3 +54,43 @@ TEST_F(TestShellApplicationTestFixture, WriteAndReadOnceTest) {
 
 	EXPECT_EQ(output.str(), expected);
 }
+
+TEST_F(TestShellApplicationTestFixture, WriteInvalidCharacterLBATest) {
+	Shell shell(&ssdMock);
+	std::istringstream input("write 0A 0x000000AA");
+	std::ostringstream output;
+
+	EXPECT_THROW(shell.Run(input, output), std::exception);
+}
+
+TEST_F(TestShellApplicationTestFixture, WriteInvalidRangeLBATest) {
+	Shell shell(&ssdMock);
+	std::istringstream input("write 101 0x000000AA");
+	std::ostringstream output;
+
+	EXPECT_THROW(shell.Run(input, output), std::exception);
+}
+
+TEST_F(TestShellApplicationTestFixture, WriteInvalidCharacterDataTest) {
+	Shell shell(&ssdMock);
+	std::istringstream input("write 10 0x0000GED0");
+	std::ostringstream output;
+
+	EXPECT_THROW(shell.Run(input, output), std::exception);
+}
+
+TEST_F(TestShellApplicationTestFixture, WriteNotStart0xDataTest) {
+	Shell shell(&ssdMock);
+	std::istringstream input("write 10 000000AA");
+	std::ostringstream output;
+
+	EXPECT_THROW(shell.Run(input, output), std::exception);
+}
+
+TEST_F(TestShellApplicationTestFixture, WriteNot8CharacterDataTest) {
+	Shell shell(&ssdMock);
+	std::istringstream input("write 10 0x123456");
+	std::ostringstream output;
+
+	EXPECT_THROW(shell.Run(input, output), std::exception);
+}
