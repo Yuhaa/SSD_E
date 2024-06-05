@@ -1,16 +1,23 @@
 #include "Shell.h"
-#include "ReadCommand.h"
-#include "WriteCommand.h"
-#include "FullWriteCommand.h"
-#include "FullReadCommand.h"
 
 Shell::Shell(DriverInterface* pSSDDriver)
 	: m_pSSDDriver(pSSDDriver)
+    , m_pCommandInvoker(nullptr)
 {
+}
+
+Shell::~Shell()
+{
+    if (m_pCommandInvoker != nullptr) {
+        delete m_pCommandInvoker;
+        m_pCommandInvoker = nullptr;
+    }
 }
 
 void Shell::Run(istream& input, ostream& output)
 {
+    m_pCommandInvoker = new SSDCommandInvoker(m_pSSDDriver, output);
+
     string line;
     while (getline(input, line)) {
         handleCommand(line, output);
@@ -24,25 +31,10 @@ void Shell::handleCommand(string strCommandLine, ostream& output)
     string strCommand = vCommandList[0];
     vCommandList.erase(vCommandList.begin());
 
-    if (strCommand == "read") {
-        ReadCommand read(m_pSSDDriver, output);
-        read.SetCommandList(vCommandList);
-        read.Execute();
-    }
-    else if (strCommand == "fullread") {
-        FullReadCommand cmd(m_pSSDDriver, output);
-        cmd.SetCommandList(vCommandList);
-        cmd.Execute();
-    }
-    else if (strCommand == "write") {
-        WriteCommand cmd(m_pSSDDriver, output);
-        cmd.SetCommandList(vCommandList);
-        cmd.Execute();
-    }
-    else if (strCommand == "fullwrite") {
-        FullWriteCommand cmd(m_pSSDDriver, output);
-        cmd.SetCommandList(vCommandList);
-        cmd.Execute();
+    SSDComamnd* pCommand = m_pCommandInvoker->GetCommand(strCommand);
+    if (pCommand) {
+        pCommand->SetCommandList(vCommandList);
+        pCommand->Execute();
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DriverInterface.h"
+#include "SSDCommandInvoker.h"
 
 #include <iostream>
 #include <vector>
@@ -11,14 +12,18 @@ class Shell
 {
 public:
 	Shell(DriverInterface* pSSDDriver);
+	virtual ~Shell();
 
 	void Run(istream& input, ostream& output);
 
 private:
-	DriverInterface* m_pSSDDriver;
 
 	void handleCommand(string lineString, ostream& output);
 
 	vector<string> SplitLine(string& strCommandLine);
+
+private:
+	DriverInterface* m_pSSDDriver;
+	SSDCommandInvoker* m_pCommandInvoker;
 };
 
