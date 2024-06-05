@@ -13,6 +13,10 @@ protected:
 	void _parseCommand() override;
 
 private:
+	int _checkAndGetLBA(string paramString);
+	int _checkAndGetData(string paramString);
+
+private:
 	DriverInterface* m_pSSDDriver;
 
 	int m_nLBA;

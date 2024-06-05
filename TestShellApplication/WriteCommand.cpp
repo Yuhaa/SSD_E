@@ -20,36 +20,46 @@ void WriteCommand::_execute()
 
 void WriteCommand::_parseCommand()
 {
-	if (m_commandList.size() != 2) {
+	constexpr int REQUIRED_COMMAND_COUNT = 2;
+	if (m_commandList.size() != REQUIRED_COMMAND_COUNT) {
 		throw std::exception();
 	}
 
-	string lbaString = m_commandList[0];
-	for (const char ch : lbaString) {
+	m_nLBA = _checkAndGetLBA(m_commandList[0]);
+	m_nData = _checkAndGetData(m_commandList[1]);
+}
+
+int WriteCommand::_checkAndGetLBA(string paramString)
+{
+	for (const char ch : paramString) {
 		if ((ch >= '0') && (ch <= '9')) continue;
 		throw std::exception("[Invalid LBA] Not Decimal Character");
 	}
-	int lba = std::stoi(lbaString, nullptr, 10);
-	if (lba < 0 || lba > 99) {
+	int result = std::stoi(paramString, nullptr, 10);
+	if (result < 0 || result > 99) {
 		throw std::exception("[Invalid LBA] LBA Must be 0 ~ 99");
 	}
-	m_nLBA = lba;
 
-	string dataString = m_commandList[1];
-	if (dataString.substr(0, 2).compare("0x") != 0) {
+	return result;
+}
+
+int WriteCommand::_checkAndGetData(string paramString)
+{
+	if (paramString.substr(0, 2).compare("0x") != 0) {
 		throw std::exception("[Invalid Data] Not Start 0x");
 	}
-	dataString = dataString.substr(2);
+	paramString = paramString.substr(2);
 
-	if (dataString.size() != 8) {
+	if (paramString.size() != 8) {
 		throw std::exception("[Invalid Data] Not 8 Character");
 	}
 
-	for (const char ch : dataString) {
+	for (const char ch : paramString) {
 		if ((ch >= '0') && (ch <= '9')) continue;
 		if ((ch >= 'a') && (ch <= 'f')) continue;
 		if ((ch >= 'A') && (ch <= 'F')) continue;
 		throw std::exception("[Invalid Data] Not Hex Character");
 	}
-	m_nData = std::stoi(dataString, nullptr, 16);
+
+	return std::stoi(paramString, nullptr, 16);
 }
