@@ -61,5 +61,5 @@ int WriteCommand::_checkAndGetData(string paramString)
 		throw std::exception("[Invalid Data] Not Hex Character");
 	}
 
-	return std::stoi(paramString, nullptr, 16);
+	return std::stoll(paramString, nullptr, 16);
 }
