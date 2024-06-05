@@ -20,7 +20,12 @@ void Shell::Run(istream& input, ostream& output)
 
     string line;
     while (getline(input, line)) {
-        handleCommand(line, output);
+        try {
+            handleCommand(line, output);
+        }
+        catch (ExitShellException& e) {
+            break;
+        }
     }
 }
 

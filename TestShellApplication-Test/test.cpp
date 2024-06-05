@@ -6,6 +6,7 @@
 #include "WriteCommand.cpp"
 #include "FullReadCommand.cpp"
 #include "FullWriteCommand.cpp"
+#include "ExitCommand.cpp"
 #include "SSDCommandInvoker.cpp"
 #include "Shell.cpp"
 
@@ -260,4 +261,30 @@ TEST_F(TestShellApplicationTestFixture, FullWriteNot8CharacterDataTest) {
 		.Times(0);
 
 	EXPECT_EQ(RunCommand(strCommandLine), strExpectedResult);
+}
+
+// exit 
+TEST_F(TestShellApplicationTestFixture, ExitWithNoError) {
+	std::string strCommandLine = "exit";
+
+	EXPECT_CALL(ssdMock, Read)
+		.Times(0);
+
+	EXPECT_CALL(ssdMock, Write)
+		.Times(0);
+
+	EXPECT_NO_THROW(RunCommand(strCommandLine));
+}
+
+TEST_F(TestShellApplicationTestFixture, ExitIgnoreFollowingCommands) {
+	std::string strCommandLines = "exit\nread 10\n";
+	std::string strExpectedResult = "";
+
+	EXPECT_CALL(ssdMock, Read)
+		.Times(0);
+
+	EXPECT_CALL(ssdMock, Write)
+		.Times(0);
+
+	EXPECT_EQ(RunCommand(strCommandLines), strExpectedResult);
 }
