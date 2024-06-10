@@ -5,6 +5,7 @@
 #include "DeviceDriver.cpp"
 #include "FileManager.cpp"
 #include "SSDCommand.cpp"
+#include "BufferManager.cpp"
 
 using namespace testing;
 
@@ -12,6 +13,8 @@ class SSDMock : public SSDInterface {
 public:
 	MOCK_METHOD(bool, Read, (int nLba), (override));
 	MOCK_METHOD(bool, Write, (int nLba, string sData), (override));
+	MOCK_METHOD(bool, Erase, (int nLba, int nSize), (override));
+	MOCK_METHOD(bool, Flush, (), (override));
 };
 
 class DeviceDriverTestFixture : public testing::Test {
